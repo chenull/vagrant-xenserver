@@ -3,6 +3,7 @@ require "xmlrpc/client"
 require "vagrant-xenserver/util/uploader"
 require "rexml/document"
 require "json"
+require "digest/md5"
 
 module VagrantPlugins
   module XenServer
@@ -21,7 +22,7 @@ module VagrantPlugins
           disk_info={}
           begin
             begin
-              disk_info=JSON.parse(IO.popen(["qemu-img", "info",box_vhd_file,"--output=json"]).read) 
+              disk_info=JSON.parse(IO.popen(["qemu-img", "info",box_vhd_file,"--output=json"]).read)
             rescue JSON::ParserError
               size=`qemu-img info #{box_vhd_file} | grep "virtual size" | cut "-d(" -f2 | cut "-d " -f1`
               disk_info['virtual-size']=size.strip
@@ -42,7 +43,7 @@ module VagrantPlugins
           @logger.info("box name=" + env[:machine].box.name.to_s)
           @logger.info("box version=" + env[:machine].box.version.to_s)
 
-          md5=`dd if=#{box_vhd_file} bs=1M count=1 | md5sum | cut '-d ' -f1`.strip
+          md5=File.open(box_vhd_file) do |fh| Digest::MD5.hexdigest(fh.read(1024*1024)) end
 
           @logger.info("md5=#{md5}")
 
