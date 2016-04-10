@@ -13,26 +13,27 @@ module VagrantPlugins
           @app = app
           @logger = Log4r::Logger.new("vagrant::xenserver::actions::create_vm")
         end
-        
+
         def call(env)
           vdi_ref = env[:my_vdi]
-          
+
           networks = env[:xc].call("network.get_all_records",env[:session])['Value']
 
           himn = networks.find { |ref,net| net['other_config']['is_host_internal_management_network'] }
           (himn_ref,himn_rec) = himn
 
           @logger.info("himn_uuid="+himn_rec['uuid'])
-          
+
           username = Etc.getlogin
-          
+
           oim = env[:xc].call("VM.get_by_name_label",env[:session],"Other install media")['Value'][0]
 
           box_name = env[:machine].box.name.to_s
           box_version = env[:machine].box.version.to_s
+          machine_name = env[:machine].name
 
           if env[:machine].provider_config.name.nil?
-            vm_name = "#{username}/#{box_name}/#{box_version}"
+            vm_name = "#{username}/#{machine_name}/#{box_name}/#{box_version}"
           else
             vm_name = env[:machine].provider_config.name
           end
@@ -54,7 +55,7 @@ module VagrantPlugins
           }
 
           vbd_res = env[:xc].call("VBD.create",env[:session],vbd_record)
-          
+
           @logger.info("vbd_res=" + vbd_res.to_s)
 
           vif_record = {
@@ -72,7 +73,7 @@ module VagrantPlugins
           }
 
           vif_res = env[:xc].call("VIF.create",env[:session],vif_record)
-          
+
           @logger.info("vif_res=" + vif_res.to_s)
 
           if env[:machine].provider_config.pv
