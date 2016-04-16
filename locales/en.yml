@@ -14,3 +14,5 @@ en:
         Failure executing qemu-img. Check that it is installed and working, and that the VHD file referenced is valid.
       nodefaultsr_error: |-
         Failed to find a valid default SR for the pool. Please set one.
+      invalid_network: |-
+        Invalid network %{network} in machine %{vm}. Available networks: %{allnetwork}

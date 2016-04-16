@@ -34,6 +34,14 @@ module VagrantPlugins
       class NoDefaultSR < VagrantXenServerError
         error_key(:nodefaultsr_error)
       end
+
+      class InvalidNetwork < VagrantXenServerError
+        error_key(:invalid_network)
+      end
+
+      class NoDefaultSeR < VagrantXenServerError
+        error_key(:nodefaultsr_error)
+      end
     end
   end
 end
