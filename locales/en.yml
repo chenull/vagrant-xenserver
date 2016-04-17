@@ -16,3 +16,5 @@ en:
         Failed to find a valid default SR for the pool. Please set one.
       invalid_network: |-
         Invalid network %{network} in machine %{vm}. Available networks: %{allnetwork}
+      invalid_interface: |-
+        Configuration Error: Interface %{eth} on network %{net} is %{opt}. %{message} !

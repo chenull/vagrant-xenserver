@@ -39,6 +39,10 @@ module VagrantPlugins
         error_key(:invalid_network)
       end
 
+      class InvalidInterface < VagrantXenServerError
+        error_key(:invalid_interface)
+      end
+
       class NoDefaultSeR < VagrantXenServerError
         error_key(:nodefaultsr_error)
       end

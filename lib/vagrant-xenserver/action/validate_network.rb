@@ -61,6 +61,9 @@ module VagrantPlugins
             # Assign network UUID/ref
             v[:net_ref] = net_ref
 
+            # Assign network type
+            v[:network_type] = net_rec["network_type"]
+
             # no match, assign a device number (ethX) later
             if v[:device].nil?
               # vifs_unknown will contains vifs without :device defined
@@ -70,16 +73,39 @@ module VagrantPlugins
               if v[:device].start_with?("eth") and eth.include?(v[:device].to_sym)
                 eth[v[:device].to_sym] = v
               else
-                raise "Configration Error for network `#{v[:network]}' and device `#{v[:device]}'"
+                raise "Configration Error in netowrk `#{v[:network]}' for device name `#{v[:device]}'"
               end
             end
           end
+
 
           # Populate `eth' hash from the rest of unconfigured vifs
           vifs_unknown.each do |vif|
             unconfigured_eth = eth.find {|k,v| v.empty?}[0]
             vif[:device] = unconfigured_eth.to_s
             eth[unconfigured_eth.to_sym] = vif
+          end
+
+          # Validate network settings:
+          #   - if `ip' and dhcp is set, raise error
+          #   - ip and netmask must be defined it dhcp is not set
+          #   - public_network
+          #     - can have gateway
+          #   - private_network (internal xenserver host-only network)
+          #     - CANNOT have gateway
+          #     - if `ip' defined, raise error if dhcp is set
+          eth.each do |e, opt|
+            raise Errors::InvalidInterface, eth: e, opt: opt[:proto], net: opt[:network],
+              message: "No IP address is defined" if opt[:proto] == 'static' and opt[:ip].nil?
+
+            raise Errors::InvalidInterface, eth: e, opt: opt[:proto], net: opt[:network],
+              message: "No IP netmask is defined" if opt[:proto] == 'static' and opt[:netmask].nil?
+
+            raise Errors::InvalidInterface, eth: e, opt: opt[:proto], net: opt[:network],
+              message: "Cannot assign IP #{opt[:ip]} here" if opt[:proto] == 'dhcp' and !opt[:ip].nil?
+
+            raise Errors::InvalidInterface, eth: e, opt: opt[:network_type], net: opt[:network],
+              message: "Cannot assign gateway #{opt[:gateway]} here" if opt[:network_type] == "private_network" and !opt[:gateway].nil?
           end
 
           # Put eth on global env

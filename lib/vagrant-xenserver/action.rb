@@ -15,6 +15,7 @@ module VagrantPlugins
           b.use SyncedFolders
           b.use StartVM
           b.use WaitForCommunicator, ["Running"]
+          b.use ConfigureNetwork
           b.use PrepareNFSSettings
         end
       end
@@ -208,6 +209,7 @@ module VagrantPlugins
 
       action_root = Pathname.new(File.expand_path('../action', __FILE__))
       autoload :ValidateNetowrk, action_root.join("validate_network")
+      autoload :ConfigureNetwork, action_root.join("configure_network")
       autoload :CreateVIFs, action_root.join("create_vifs")
       autoload :ConnectXS, action_root.join("connect_xs")
       autoload :DummyMessage, action_root.join('dummy')
