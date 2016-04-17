@@ -63,7 +63,7 @@ module VagrantPlugins
 
                   # Find which network has the bridge name match in Vagrantfile
                   # and is routable
-                  xenbr_net = networks['Value'].find { |ref,net| net['bridge'] == options[:bridge] }
+                  xenbr_net = networks['Value'].find { |ref,net| net['name_label'].upcase == options[:network].upcase }
                   (ref, xenbr_rec) = xenbr_net
 
                   # Find the VIF's "device" number, e.g. device 2 is eth2 in a centos guest
