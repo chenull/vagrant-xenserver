@@ -8,17 +8,17 @@ module VagrantPlugins
       @logger = Log4r::Logger.new('vagrant::xenserver::action')
 
       def self.action_boot
-	Vagrant::Action::Builder.new.tap do |b| 
+	Vagrant::Action::Builder.new.tap do |b|
           b.use Provision
           b.use PrepareNFSValidIds
           b.use SyncedFolderCleanup
           b.use SyncedFolders
           b.use StartVM
           b.use WaitForCommunicator, ["Running"]
-          b.use PrepareNFSSettings         
+          b.use PrepareNFSSettings
         end
       end
-      
+
       def self.action_up
 	Vagrant::Action::Builder.new.tap do |b|
           b.use HandleBox
@@ -28,6 +28,7 @@ module VagrantPlugins
             # Create the VM
             if !env[:result]
               b2.use UploadVHD
+              b2.use ValidateNetowrk
               b2.use CloneDisk
               b2.use CreateVM
               b2.use CreateVIFs
@@ -36,7 +37,7 @@ module VagrantPlugins
           end
         end
       end
-      
+
       def self.action_halt
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
@@ -51,7 +52,7 @@ module VagrantPlugins
                 @logger.info "Not running"
                 next
               end
-              b3.use HaltVM            
+              b3.use HaltVM
             end
           end
         end
@@ -206,6 +207,7 @@ module VagrantPlugins
       end
 
       action_root = Pathname.new(File.expand_path('../action', __FILE__))
+      autoload :ValidateNetowrk, action_root.join("validate_network")
       autoload :CreateVIFs, action_root.join("create_vifs")
       autoload :ConnectXS, action_root.join("connect_xs")
       autoload :DummyMessage, action_root.join('dummy')
