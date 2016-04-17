@@ -90,14 +90,12 @@ module VagrantPlugins
             mac = options[:mac] || ''
 
             next_device = env[:xc].call("VM.get_allowed_VIF_devices",env[:session],myvm)['Value']
-            puts "CONT #{device_count.to_s}"
-            puts "NETX #{next_device[0]}"
-            #raise "FATAL: invalid network configuration defined in Vagrantfile" if device_count.to_s != next_device[0]
+            raise "FATAL: invalid network configuration defined in Vagrantfile" if device_count.to_s != next_device[0]
 
             vif_record = {
               'VM' => myvm,
               'network' => options[:net_ref],
-              'device' => device_count,
+              'device' => device_count.to_s,
               'MAC' => mac,
               'MTU' => '1500',
               'other_config' => {},
@@ -107,16 +105,11 @@ module VagrantPlugins
               'ipv4_allowed' => [],
               'ipv6_allowed' => []
             }
-            puts "VIF #{vif_record}"
 
             # Call Xenserver to create VIF
             vif_res = env[:xc].call("VIF.create",env[:session],vif_record)
-            puts
-            puts
-            puts "RESS #{vif_res}"
 
             # Increment device_count
-            raise "FATAL: invalid network configuration defined in Vagrantfile" if device_count.to_s != next_device[0]
             device_count += 1
 
             @logger.info("vif_res=" + vif_res.to_s)
