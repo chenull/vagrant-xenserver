@@ -1,6 +1,5 @@
 require 'socket'
 require 'rbconfig'
-
 require "vagrant-xenserver/util/xe"
 
 def os

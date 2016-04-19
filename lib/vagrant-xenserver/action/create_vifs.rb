@@ -22,7 +22,7 @@ module VagrantPlugins
 
             next_device = env[:xc].call("VM.get_allowed_VIF_devices",env[:session],myvm)['Value']
             # TODO: Make error definition in errors.rb
-            raise "FATAL: invalid network configuration defined in Vagrantfile" if vif_count.to_s != next_device[0]
+            raise "FATAL: invalid network device (#{vif})" if vif_count.to_s != next_device[0]
 
             vif_record = {
               'VM' => myvm,

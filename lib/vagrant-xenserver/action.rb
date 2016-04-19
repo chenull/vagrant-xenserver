@@ -9,6 +9,7 @@ module VagrantPlugins
 
       def self.action_boot
 	Vagrant::Action::Builder.new.tap do |b|
+          b.use UpdateNetwork
           b.use Provision
           b.use PrepareNFSValidIds
           b.use SyncedFolderCleanup
@@ -25,11 +26,11 @@ module VagrantPlugins
           b.use HandleBox
           b.use ConfigValidate
           b.use ConnectXS
+          b.use ValidateNetowrk
           b.use Call, IsCreated do |env,b2|
             # Create the VM
             if !env[:result]
               b2.use UploadVHD
-              b2.use ValidateNetowrk
               b2.use CloneDisk
               b2.use CreateVM
               b2.use CreateVIFs
@@ -209,6 +210,7 @@ module VagrantPlugins
 
       action_root = Pathname.new(File.expand_path('../action', __FILE__))
       autoload :ValidateNetowrk, action_root.join("validate_network")
+      autoload :UpdateNetwork, action_root.join("update_network")
       autoload :ConfigureNetwork, action_root.join("configure_network")
       autoload :CreateVIFs, action_root.join("create_vifs")
       autoload :ConnectXS, action_root.join("connect_xs")

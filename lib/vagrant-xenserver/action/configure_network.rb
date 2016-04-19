@@ -7,6 +7,8 @@ require "json"
 module VagrantPlugins
   module XenServer
     module Action
+      # This action will tell vagrant to activate configure_networks capability
+      # Interface configuration for a VM must be defined first in env[:vifs]
       class ConfigureNetwork
         def initialize(app, env)
           @app = app
