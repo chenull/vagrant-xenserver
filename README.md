@@ -9,7 +9,7 @@ control and provision machines on a XenServer host.
 
 ## Installation
 ```shell
-vagrant plugin install vagrant-xenserver
+vagrant plugin install http://repo.jcamp.net/gems/vagrant-xenserver/vagrant-xenserver-0.0.11.gem
 ```
 
 ## XenServer host setup
@@ -76,16 +76,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu"
 
   config.vm.provider :xenserver do |xs|
-  xs.xs_host = "st29.uk.xensource.com"
-  xs.xs_username = "root"
-  xs.xs_password = "xenroot"
-  xs.pv = true
-  xs.memory = 2048
+    xs.xs_host = "st29.uk.xensource.com"
+    xs.xs_username = "root"
+    xs.xs_password = "xenroot"
+    xs.pv = true
+    xs.memory = 2048
   end
-  config.vm.network "public_network", bridge: "xenbr0"
+
+  config.vm.network "public_network",
+    network: "LAN",
+    device: "eth1",         # Don't ever use eth0
+    proto: "static",
+    ip: "192.168.1.10",
+    netmask: "255.255.255.0",
+    gateway: "192.168.1.1",
+    dns: "8.8.8.8 8.8.4.4"
 end
 
 ```
+This fork is different from the [original](https://github.com/jonludlam/vagrant-xenserver) in how to configure the network. Instead of using `bridge` option, here we are using the `name label` of the network, please see example above.
 
 Note that by default there will be no connection to the external network, so most configurations will require a `public_network` defined as in the above Vagrantfile
 
