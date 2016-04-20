@@ -18,3 +18,6 @@ en:
         Invalid network %{network} in machine %{vm}. Available networks: %{allnetwork}
       invalid_interface: |-
         Configuration Error: Interface %{eth} on network %{net} is %{opt}. %{message} !
+    info:
+      configure_resolver: |-
+        Configuring DNS resolver using %{dns}

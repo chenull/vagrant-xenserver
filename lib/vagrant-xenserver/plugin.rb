@@ -19,6 +19,11 @@ module VagrantPlugins
         Config
       end
 
+      guest_capability('linux', 'configure_resolver') do
+        require_relative 'cap/configure_resolver'
+        Cap::ConfigureResolver
+      end
+
       provider('xenserver', parallel: true) do
         setup_i18n
 

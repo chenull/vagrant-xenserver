@@ -21,6 +21,7 @@ module VagrantPlugins
 
           # Configure interfaces that user requested. Machine should be up and
           # running now.
+          @logger.info("Configuring guest network")
           env[:ui].output(I18n.t("vagrant.actions.vm.network.preparing"))
           networks_to_configure = []
 
@@ -30,11 +31,11 @@ module VagrantPlugins
               :type      => option[:proto]
             }
 
-            network[:ip] = option[:ip] if option[:ip]
-            network[:netmask] = option[:netmask] if option[:netmask]
-            network[:gateway] = option[:gateway] if option[:gateway]
+            network[:ip] = option[:ip]
+            network[:netmask] = option[:netmask]
+            network[:gateway] = option[:gateway]
 
-            static_str = option[:ip].empty? ? "" : " / #{option[:ip]}"
+            static_str = option[:ip].nil? ? "" : " / #{option[:ip]}"
 
             env[:ui].detail(I18n.t(
               "vagrant.virtualbox.network_adapter",
